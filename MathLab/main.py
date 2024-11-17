@@ -1,7 +1,11 @@
+'''
+Main file of projects.
+'''
+
+
 from fastapi import FastAPI
 
-app = FastAPI()
+from MathLab.core.database import lifespan
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello, Uvicorn!"}
+app = FastAPI(lifespan=lifespan)
+
