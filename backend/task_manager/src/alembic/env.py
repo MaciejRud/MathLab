@@ -5,8 +5,8 @@ from logging.config import fileConfig
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
-from MathLab.core.config import config
-from MathLab.models.model import Base
+from src.utils.config import config
+from models.model import Base
 
 from alembic import context
 

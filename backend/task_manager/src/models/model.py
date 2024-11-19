@@ -1,6 +1,6 @@
-'''
-Databases models for Api.
-'''
+"""
+Models for task_manager.
+"""
 
 import uuid
 
@@ -14,56 +14,16 @@ from sqlalchemy import (
     ForeignKey
 )
 
-from sqlalchemy.orm import DeclarativeBase, relationship
+from sqlalchemy.orm import declarative_base, relationship
 
-class Base(DeclarativeBase):
-    pass
+from utils.database import metadata_obj
 
-
-class Teacher(Base):
-    __tablename__ = 'teachers'
-
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
-    email = Column(String, unique=True, index=True)
-    password_hash = Column(String)
-    name = Column(String)
-    surname = Column(String)
-    disabled = Column(Boolean, default=False)
-
-    cohorts = relationship('Cohort', back_populates='teacher')
-
-
-class Cohort(Base):
-    __tablename__ = 'cohorts'
-
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
-    name = Column(String)
-    teacher_id = Column(UUID, ForeignKey('teachers.id'))
-    level_of_education = Column(Integer)
-
-    students = relationship('Student', back_populates='cohort')
-    teacher = relationship('Teacher', back_populates='cohorts')
-
-class Student(Base):
-    __tablename__ = 'students'
-
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
-    email = Column(String, unique=True, index=True)
-    password_hash = Column(String)
-    name = Column(String)
-    surname = Column(String)
-    date_of_birth = Column(Date)
-    current_level = Column(Integer)
-    disabled = Column(Boolean, default=False)
-    cohort_id = Column(UUID, ForeignKey('cohorts.id'))
-
-    cohort = relationship('Cohort', back_populates='students')
-
+Base = declarative_base(metadata=metadata_obj)
 
 class Chapter(Base):
     __tablename__ = 'chapters'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String)
     order = Column(Integer, unique=True, index=True)
     level_of_education = Column(String)
@@ -75,7 +35,7 @@ class Chapter(Base):
 class Task(Base):
     __tablename__ = 'tasks'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     description = Column(String)
     task_type  = Column(String)
     order = Column(Integer, unique=True, index=True)
@@ -89,7 +49,7 @@ class Task(Base):
 class Example(Base):
     __tablename__ = 'examples'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     body = Column(String)
     correct_answer = Column(String)
     explanation = Column(String)
@@ -106,7 +66,7 @@ class Example(Base):
 class Step(Base):
     __tablename__ = 'steps'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     body = Column(String)
     answers = Column(String)
     #to solve what kind of type should be here (json? 4 different columns for asnswers abcd?)
@@ -123,7 +83,7 @@ class Step(Base):
 class StudentAnswer(Base):
     __tablename__ = 'student_answers'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     student_id = Column(UUID, ForeignKey('students.id'))
     example_id = Column(UUID, ForeignKey('examples.id'), nullable=True)
     step_id = Column(UUID, ForeignKey('steps.id'), nullable=True)

@@ -4,12 +4,14 @@ Set up database.
 
 from fastapi import FastAPI
 
+from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from contextlib import asynccontextmanager
-from MathLab.core.config import config
-from MathLab.models.model import Base
+from .config import config
 
+schema_name = 'task_management'
+metadata_obj = MetaData(schema=schema_name)
 
 engine = create_async_engine(
     config.DATABASE_URL, echo=True
@@ -23,9 +25,7 @@ async_session_maker = async_sessionmaker(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
+    app.state.async_session = async_session_maker
     yield
-
     await engine.dispose()
+
