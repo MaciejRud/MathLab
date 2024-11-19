@@ -16,7 +16,7 @@ from sqlalchemy import (
 
 from sqlalchemy.orm import relationship, declarative_base
 
-from backend.cohort_management.src.utils.database import metadata_obj
+from src.utils.database import metadata_obj
 
 Base = declarative_base(metadata=metadata_obj)
 
