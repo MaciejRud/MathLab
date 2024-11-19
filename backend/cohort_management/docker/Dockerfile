@@ -3,8 +3,8 @@ FROM python:3.13-alpine3.20
 ENV PYTHONUNBUFFERED=1
 ENV PATH="/py/bin:$PATH"
 
-COPY ./cohort_management/requirements.txt /tmp/requirements.txt
-COPY ./cohort_management /cohort_management
+COPY backend/cohort_management/requirements.txt /tmp/requirements.txt
+COPY backend/cohort_management /cohort_management
 WORKDIR /cohort_management
 EXPOSE 8000
 
