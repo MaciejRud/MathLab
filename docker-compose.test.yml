@@ -1,0 +1,43 @@
+services:
+  cohort_management:
+    container_name: cohort_management
+    build:
+      context: .
+      dockerfile: backend/cohort_management/docker/Dockerfile
+    ports:
+      - "8001:8000"
+    environment:
+      - ENV_STATE=${ENV_STATE:-test}
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+    command: ["sleep", "infinity"]
+
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - test-db-data:/var/lib/postgres/data
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${DB_NAME}", "-U", "${DB_USER}"]
+
+  app-tests:
+    build:
+      context: .
+      dockerfile: backend/cohort_management/docker/Dockerfile
+      args:
+        INSTALL_TEST_REQUIREMENTS: "true"
+    command: ["pytest", "--disable-warnings", "-v"]
+    environment:
+      - ENV_STATE=test
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+    volumes:
+      - ./backend/cohort_management:/cohort_management
+
+volumes:
+  test-db-data:
