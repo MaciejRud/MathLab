@@ -7,7 +7,8 @@ services:
     ports:
       - "8001:8000"
     environment:
-      - ENV_STATE=${ENV_STATE:-development}
+      - ENV_STATE=${ENV_STATE:-dev}
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
 
@@ -16,7 +17,7 @@ services:
     volumes:
       - dev-db-data:/var/lib/postgres/data
     environment:
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_DB: devdb
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:

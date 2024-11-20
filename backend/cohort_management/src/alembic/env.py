@@ -1,12 +1,12 @@
 import asyncio
+import os
 
 from logging.config import fileConfig
 
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
-from src.utils.config import config
-from backend.cohort_management.src.models.model import Base
+from src.models.model import Base
 
 from alembic import context
 
@@ -15,7 +15,8 @@ from alembic import context
 config_alembic = context.config
 
 #Load database URL from your custom config
-config_alembic.set_main_option('sqlalchemy.url', config.DATABASE_URL)
+DATABASE_URL = os.getenv('DATABASE_URL')
+config_alembic.set_main_option('sqlalchemy.url', DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -40,7 +41,7 @@ def run_migrations_offline() -> None:
 
     """
     context.configure(
-        url=config.DATABASE_URL,
+        url=DATABASE_URL,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -60,7 +61,7 @@ async def run_async_migrations():
     "Create an Engine and associate async connection with the context."
 
     connectable: AsyncEngine = create_async_engine(
-        config.DATABASE_URL,
+        DATABASE_URL,
         poolclass=pool.NullPool,
     )
 
