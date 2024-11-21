@@ -10,12 +10,13 @@ services:
       - ENV_STATE=${ENV_STATE:-dev}
       - DATABASE_URL=${DATABASE_URL}
     depends_on:
-      - db
+      - db_dev
+      - init
 
-  db:
+  db_dev:
     image: postgres:13-alpine
     volumes:
-      - dev-db-data:/var/lib/postgres/data
+      - db-dev-data:/var/lib/postgres/data
     environment:
       POSTGRES_DB: devdb
       POSTGRES_USER: ${DB_USER}
@@ -23,5 +24,16 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-q", "-d", "${DB_NAME}", "-U", "${DB_USER}"]
 
+  init:
+    build:
+      context: .
+      dockerfile: backend/cohort_management/docker/init.dockerfile
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@db_dev/${DB_NAME}
+      - DB_HOST=db_dev
+      - DB_USER=${DB_USER}
+    depends_on:
+      - db_dev
+
 volumes:
-  dev-db-data:
+  db-dev-data:

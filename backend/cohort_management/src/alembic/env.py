@@ -16,6 +16,7 @@ config_alembic = context.config
 
 #Load database URL from your custom config
 DATABASE_URL = os.getenv('DATABASE_URL')
+print(DATABASE_URL)
 config_alembic.set_main_option('sqlalchemy.url', DATABASE_URL)
 
 # Interpret the config file for Python logging.
