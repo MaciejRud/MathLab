@@ -12,16 +12,13 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from contextlib import asynccontextmanager
 
-
 DATABASE_URL = os.getenv('DATABASE_URL')
 DB_FORCE_ROLL_BACK = os.getenv('DB_FORCE_ROLL_BACK', False)
 
 schema_name = 'cohort_management'
 metadata_obj = MetaData(schema=schema_name)
 
-engine = create_async_engine(
-    DATABASE_URL, echo=True
-)
+engine = create_async_engine(DATABASE_URL)
 
 async_session_maker = async_sessionmaker(
     engine,
@@ -41,11 +38,11 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         try:
             yield db
             if DB_FORCE_ROLL_BACK:
-                await db.rollback()  # Asynchronicznie wycofaj zmiany podczas testów
+                await db.rollback()
             else:
-                await db.commit()  # Domyślna transakcja
+                await db.commit()
         except Exception as e:
-            await db.rollback()  # Zawsze wycofaj w przypadku wyjątku
+            await db.rollback()
             print(f"Error during database operation: {e}")
             raise
         finally:
