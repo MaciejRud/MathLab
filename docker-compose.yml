@@ -16,9 +16,9 @@ services:
   db:
     image: postgres:13-alpine
     volumes:
-      - db-dev-data:/var/lib/postgres/data
+      - db-dev-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: devdb
+      POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
@@ -29,8 +29,8 @@ services:
       context: .
       dockerfile: backend/cohort_management/docker/init.dockerfile
     environment:
-      - DATABASE_URL=postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}
-      - DB_HOST=db
+      - DATABASE_URL=${DATABASE_URL}
+      - DB_HOST=${DB_HOST}
       - DB_USER=${DB_USER}
     depends_on:
       - db

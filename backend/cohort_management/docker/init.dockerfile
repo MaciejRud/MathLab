@@ -18,4 +18,3 @@ RUN python -m venv /py && \
 
     CMD ["sh", "-c", "until pg_isready -h $DB_HOST -p 5432 -U $DB_USER; do echo 'Waiting for DB...'; sleep 1; done; \
     /py/bin/alembic -c /cohort_management/alembic.ini upgrade head"]
-
