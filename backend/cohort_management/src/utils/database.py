@@ -41,11 +41,11 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         try:
             yield db
             if DB_FORCE_ROLL_BACK:
-                await db.rollback()  # Asynchronicznie wycofaj zmiany podczas testów
+                await db.rollback()
             else:
-                await db.commit()  # Domyślna transakcja
+                await db.commit()
         except Exception as e:
-            await db.rollback()  # Zawsze wycofaj w przypadku wyjątku
+            await db.rollback()
             print(f"Error during database operation: {e}")
             raise
         finally:

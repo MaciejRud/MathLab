@@ -24,7 +24,7 @@ tasks:
   build-test:
     desc: "Build test"
     cmds:
-      - docker-compose -f docker-compose.test.yml --env-file ./config/.env.test up --build
+      - docker-compose -f docker-compose.yml -f docker-compose.test.yml --env-file ./config/.env.test up --build
 
   start-test:
     desc: "Start test"

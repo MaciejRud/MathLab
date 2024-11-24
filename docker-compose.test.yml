@@ -1,23 +1,10 @@
 services:
   cohort_management:
-    container_name: cohort_management
-    build:
-      context: .
-      dockerfile: backend/cohort_management/docker/Dockerfile
-    ports:
-      - "8001:8000"
-    environment:
-      - ENV_STATE=${ENV_STATE:-test}
-      - DATABASE_URL=${DATABASE_URL}
-    depends_on:
-      - db_test
-      - init
     command: ["sleep", "infinity"]
 
-  db_test:
+  db:
     image: postgres:13-alpine
-    volumes:
-      - db-test-data:/var/lib/postgres/data
+    volumes: []
     environment:
       POSTGRES_DB: testdb
       POSTGRES_USER: ${DB_USER}
@@ -31,13 +18,13 @@ services:
       dockerfile: backend/cohort_management/docker/Dockerfile
       args:
         INSTALL_TEST_REQUIREMENTS: "true"
-    command: ["pytest",  "--tb=short", "--disable-warnings", "-q", "--capture=sys"]
+    command: ["pytest",  "--tb=short", "--disable-warnings", "-q", "--log-cli-level=WARNING"]
     environment:
       - PYTHONPATH=/cohort_management
       - ENV_STATE=test
       - DATABASE_URL=${DATABASE_URL}
     depends_on:
-      - db_test
+      - db
       - init
 
   init:
@@ -45,11 +32,11 @@ services:
       context: .
       dockerfile: backend/cohort_management/docker/init.dockerfile
     environment:
-      - DATABASE_URL=postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@db_test/${DB_NAME}
-      - DB_HOST=db_test
+      - DATABASE_URL=postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}
+      - DB_HOST=db
       - DB_USER=${DB_USER}
     depends_on:
-      - db_test
+      - db
     healthcheck:
       test: ["CMD", "pg_isready", "-q", "-d", "${DB_NAME}", "-U", "${DB_USER}"]
       interval: 10s
@@ -57,5 +44,3 @@ services:
       start_period: 30s
       timeout: 5s
 
-volumes:
-  db-test-data:

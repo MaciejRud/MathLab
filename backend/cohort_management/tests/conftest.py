@@ -4,6 +4,8 @@ Configurations for pytest.
 
 import contextlib
 import pytest
+import logging
+
 
 from httpx import AsyncClient, ASGITransport
 from typing import AsyncGenerator
@@ -13,6 +15,11 @@ from cohort_management.src.models.model import Base
 from cohort_management.src.main import app
 
 get_async_session_context = contextlib.asynccontextmanager(get_db)
+
+
+
+logging.getLogger("asyncio").setLevel(logging.WARNING)  # Suppress noisy asyncio logs
+logging.getLogger('sqlalchemy').setLevel(logging.WARNING)
 
 
 @pytest.fixture(scope='session')
