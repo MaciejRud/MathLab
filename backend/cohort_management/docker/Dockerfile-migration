@@ -1,0 +1,24 @@
+FROM python:3.13-alpine3.20
+
+ENV PYTHONUNBUFFERED=1
+ENV PATH="/py/bin:$PATH"
+
+COPY backend/cohort_management/requirements-alembic.txt /tmp/requirements.txt
+COPY backend/cohort_management /cohort_management
+WORKDIR /cohort_management
+EXPOSE 8000
+
+RUN python -m venv /py && \
+    /py/bin/pip install --upgrade pip && \
+    /py/bin/pip install -r /tmp/requirements.txt && \
+    rm -rf /tmp
+
+RUN python -m venv /py && \
+    /py/bin/pip install --upgrade pip &&\
+    adduser -D --no-create-home docker-user && \
+    chown -R docker-user:docker-user /cohort_management
+
+USER docker-user
+
+# Command for creating migrations (will be overridden by `docker-compose run`)
+CMD ["sh", "-c", "echo 'Use `docker-compose run alembic revision --autogenerate -m <message>` to create migrations'"]

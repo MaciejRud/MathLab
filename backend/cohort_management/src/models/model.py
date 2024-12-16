@@ -20,18 +20,42 @@ from src.utils.database import metadata_obj
 
 Base = declarative_base(metadata=metadata_obj)
 
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    name = Column(String)
+    last_name = Column(String)
+    user_type = Column(String, nullable=False)
+    disabled = Column(Boolean, default=False)
+
+    teacher = relationship('Teacher', back_populates='user', uselist=False)
+    student = relationship('Student', back_populates='user', uselist=False)
+
 
 class Teacher(Base):
     __tablename__ = 'teachers'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
-    email = Column(String, unique=True, index=True)
-    password_hash = Column(String)
-    name = Column(String)
-    surname = Column(String)
-    disabled = Column(Boolean, default=False)
+    id = Column(UUID(as_uuid=True), ForeignKey('users.id'), primary_key=True)
+    user = relationship('User', back_populates='teacher')
 
+    #Specific fields for teachers
     cohorts = relationship('Cohort', back_populates='teacher')
+
+
+class Student(Base):
+    __tablename__ = 'students'
+
+    id = Column(UUID(as_uuid=True), ForeignKey('users.id'), primary_key=True)
+    user = relationship('User', back_populates='student')
+
+    #Specific fields for students
+    date_of_birth = Column(Date)
+    current_level = Column(Integer)
+    cohort_id = Column(UUID, ForeignKey('cohorts.id'))
+    cohort = relationship('Cohort', back_populates='students')
 
 
 class Cohort(Base):
@@ -45,20 +69,7 @@ class Cohort(Base):
     students = relationship('Student', back_populates='cohort')
     teacher = relationship('Teacher', back_populates='cohorts')
 
-class Student(Base):
-    __tablename__ = 'students'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
-    email = Column(String, unique=True, index=True)
-    password_hash = Column(String)
-    name = Column(String)
-    surname = Column(String)
-    date_of_birth = Column(Date)
-    current_level = Column(Integer)
-    disabled = Column(Boolean, default=False)
-    cohort_id = Column(UUID, ForeignKey('cohorts.id'))
-
-    cohort = relationship('Cohort', back_populates='students')
 
 
 

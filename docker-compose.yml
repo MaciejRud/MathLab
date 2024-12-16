@@ -9,6 +9,7 @@ services:
     environment:
       - ENV_STATE=${ENV_STATE:-dev}
       - DATABASE_URL=${DATABASE_URL}
+      - USERS_SECRET=${USERS_SECRET}
     depends_on:
       - db
       - init
@@ -32,6 +33,20 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - DB_HOST=${DB_HOST}
       - DB_USER=${DB_USER}
+    depends_on:
+      - db
+
+  alembic:
+    container_name: alembic
+    build:
+      context: .
+      dockerfile: backend/cohort_management/docker/Dockerfile-migration
+    command: ["tail", "-f", "/dev/null"]
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - USERS_SECRET=${USERS_SECRET}
+    volumes:
+      - ./backend/cohort_management:/cohort_management
     depends_on:
       - db
 

@@ -35,3 +35,8 @@ tasks:
     desc: "Run tests"
     cmds:
       - docker-compose -f docker-compose.yml -f docker-compose.test.yml --env-file ./config/.env.test run app-tests
+
+  create-migrate:
+    desc: "Run Alembic migration"
+    cmds:
+      - docker-compose --env-file ./config/.env.dev run --rm alembic sh -c "echo $DATABASE_URL && alembic revision --autogenerate -m \"{{.MESSAGE}}\""

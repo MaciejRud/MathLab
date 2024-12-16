@@ -24,6 +24,7 @@ services:
       - PYTHONPATH=/cohort_management
       - ENV_STATE=test
       - DATABASE_URL=${DATABASE_URL}
+      - USERSSECRET=${USERS_SECRET}
     depends_on:
       - db
       - init
