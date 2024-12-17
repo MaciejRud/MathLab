@@ -35,6 +35,18 @@ class User(Base):
     student = relationship('Student', back_populates='user', uselist=False)
 
 
+    @property
+    def is_active(self) -> bool:
+        return not self.disabled
+
+    @is_active.setter
+    def is_active(self, value: bool):
+        self.disabled = not value
+
+    is_superuser = Column(Boolean, default=False, nullable=False)
+    is_verified = Column(Boolean, default=True, nullable=False)
+
+
 class Teacher(Base):
     __tablename__ = 'teachers'
 

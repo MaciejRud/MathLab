@@ -5,7 +5,6 @@ Schemas for Users Api.
 import uuid
 
 from fastapi_users import schemas
-from pydantic import EmailStr
 
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
@@ -17,7 +16,8 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
 class UserCreate(schemas.BaseUserCreate):
     name: str
     last_name: str
-    user_type: str  # 'teacher' or 'student'
+    user_type: str # 'teacher' or 'student'
+    is_verified: bool = True
 
 
 
