@@ -8,7 +8,8 @@ from fastapi_users import BaseUserManager
 
 
 
-SECRET = os.getenv('USER_SECRET')
+print(f"USERS_SECRET: {os.getenv('USERS_SECRET')}")  # Debug statement
+SECRET = os.getenv('USERS_SECRET', 'default_secret')
 
 class UniversalUserManager(BaseUserManager):
 

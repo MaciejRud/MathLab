@@ -19,5 +19,7 @@ class UserCreate(schemas.BaseUserCreate):
     user_type: str # 'teacher' or 'student'
     is_verified: bool = True
 
+class UserUpdate(UserRead):
+    pass
 
 

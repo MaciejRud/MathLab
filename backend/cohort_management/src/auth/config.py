@@ -10,8 +10,9 @@ from fastapi_users.authentication import (
     BearerTransport
 )
 
-
-SECRET = os.getenv('USER_SECRET')
+print(os.getenv('USERS_SECRET'))  # Debug statement
+print(f"USERS_SECRET: {os.getenv('USERS_SECRET')}")  # Debug statement
+SECRET = os.getenv('USERS_SECRET', 'default_secret')
 
 bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 
