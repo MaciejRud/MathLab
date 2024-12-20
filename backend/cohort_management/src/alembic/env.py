@@ -25,6 +25,7 @@ if config_alembic.config_file_name is not None:
 
 
 target_metadata = Base.metadata
+schema = target_metadata.schema
 
 
 
@@ -45,13 +46,27 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        version_table_schema=target_metadata.schema,
     )
 
     with context.begin_transaction():
         context.run_migrations()
 
+
+def include_name(name, type_, parent_names):
+    if type_ == "schema":
+        return name in [schema]
+    else:
+        return True
+
 def do_run_migrations(connection):
-    context.configure(connection=connection, target_metadata=target_metadata)
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        version_table_schema="cohort_management",
+        include_schemas=True,
+        include_name=include_name,
+    )
 
     with context.begin_transaction():
         context.run_migrations()
